@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pesquisa Cliente Oculto — Feira Fullface 2026</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+
+  header p {
+    color: #94a3b8;
+    margin-top: 8px;
+    font-size: 0.95rem;
+  }
+
+  header .tag {
+    display: inline-block;
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-top: 12px;
+  }
+
+  .companies-grid {
+    display: grid;
+    gap: 32px;
+    max-width: 1100px;
+    margin: 0 auto;
+    grid-template-columns: 1fr;
+  }
+
+  .company-card {
+    background: #161b27;
+    border: 1px solid #1e293b;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .company-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 28px;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  .company-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .company-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #f1f5f9;
+  }
+
+  .company-subtitle {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 2px;
+  }
+
+  .value-prop-banner {
+    margin: 20px 28px 0;
+    background: linear-gradient(135deg, #1e3a5f 0%, #1a2e4a 100%);
+    border: 1px solid #2d5a8e;
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .value-prop-banner .vp-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #60a5fa;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .value-prop-banner .vp-text {
+    font-size: 0.88rem;
+    color: #bfdbfe;
+    line-height: 1.5;
+  }
+
+  .details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 20px 28px 28px;
+  }
+
+  @media (max-width: 640px) {
+    .details-grid { grid-template-columns: 1fr; }
+  }
+
+  .detail-block {
+    padding: 16px;
+    border-radius: 10px;
+  }
+
+  .detail-block:hover {
+    background: #1a2235;
+  }
+
+  .detail-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+
+  .detail-label .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .detail-content {
+    font-size: 0.88rem;
+    color: #cbd5e1;
+    line-height: 1.6;
+  }
+
+  .detail-content strong {
+    color: #f1f5f9;
+    font-weight: 600;
+  }
+
+  .detail-content .quote {
+    font-style: italic;
+    color: #94a3b8;
+    border-left: 2px solid #334155;
+    padding-left: 10px;
+    margin-top: 6px;
+    font-size: 0.82rem;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-top: 4px;
+  }
+
+  .badge-green { background: #14532d; color: #4ade80; }
+  .badge-yellow { background: #3b2f00; color: #fbbf24; }
+  .badge-red { background: #3b0f0f; color: #f87171; }
+  .badge-blue { background: #1e3a5f; color: #60a5fa; }
+  .badge-purple { background: #2e1a4a; color: #c084fc; }
+
+  /* Color themes per company */
+  .theme-bioset .company-icon { background: #1a3a1a; }
+  .theme-bioset .dot { background: #4ade80; }
+  .theme-bioset .company-name { color: #4ade80; }
+
+  .theme-cromatik .company-icon { background: #3b1a1a; }
+  .theme-cromatik .dot { background: #f87171; }
+  .theme-cromatik .company-name { color: #f87171; }
+
+  .theme-fismatek .company-icon { background: #1a2a3b; }
+  .theme-fismatek .dot { background: #60a5fa; }
+  .theme-fismatek .company-name { color: #60a5fa; }
+
+  .theme-medsystem .company-icon { background: #2a1a3b; }
+  .theme-medsystem .dot { background: #c084fc; }
+  .theme-medsystem .company-name { color: #c084fc; }
+
+  .theme-medicalsan .company-icon { background: #3b2a1a; }
+  .theme-medicalsan .dot { background: #fb923c; }
+  .theme-medicalsan .company-name { color: #fb923c; }
+
+  .theme-renova .company-icon { background: #1a3a3b; }
+  .theme-renova .dot { background: #2dd4bf; }
+  .theme-renova .company-name { color: #2dd4bf; }
+
+  .divider {
+    grid-column: 1 / -1;
+    height: 1px;
+    background: #1e293b;
+    margin: 8px 0;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 64px;
+    color: #334155;
+    font-size: 0.78rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">Cliente Oculto · Feira Fullface · São Paulo · 2026</div>
+  <h1>Pesquisa Competitiva — Fullface 2026</h1>
+  <p>Levantamento de funcionamento, preços, garantias, pós-venda e percepção sobre a Blips</p>
+</header>
+
+<div style="max-width:1100px; margin: 0 auto 48px;">
+
+  <!-- RESUMO EXECUTIVO -->
+  <div style="background:#161b27; border:1px solid #1e293b; border-radius:16px; overflow:hidden; margin-bottom:32px;">
+    <div style="padding:24px 28px; border-bottom:1px solid #1e293b; display:flex; align-items:center; gap:12px;">
+      <div style="font-size:1.3rem;">📋</div>
+      <div>
+        <div style="font-size:1.2rem; font-weight:700; color:#f1f5f9;">Resumo Executivo</div>
+        <div style="font-size:0.8rem; color:#64748b; margin-top:2px;">6 empresas analisadas · Feira Fullface · São Paulo · 2026</div>
+      </div>
+    </div>
+    <div style="padding:24px 28px;">
+
+      <p style="font-size:0.9rem; color:#94a3b8; line-height:1.7; margin-bottom:24px;">
+        A pesquisa de cliente oculto mapeou 6 concorrentes diretos e indiretos presentes na Fullface 2026: <strong style="color:#e2e8f0;">Bioset, Cromatik, Fismatek, Med System (Classys/Ultraformer), Medical San e Renova.</strong> O roteiro investigou funcionamento dos equipamentos, modelos de preço e pagamento, garantias, pós-venda e tempo de indisponibilidade da máquina, e a percepção espontânea sobre a Blips.
+      </p>
+
+      <!-- Grid de achados por dimensão -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:28px;">
+
+        <div style="background:#0f1117; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+          <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#60a5fa; margin-bottom:10px;">💰 Modelos de Pagamento</div>
+          <div style="font-size:0.83rem; color:#94a3b8; line-height:1.6;">
+            Todos os players oferecem parcelamento extenso (18x a 60x). O diferencial mais agressivo foi o <strong style="color:#e2e8f0;">Vitavers da Bioset</strong> — arrendamento próprio, sem análise de crédito e sem consulta ao CPF, com entrada de apenas R$2.000. A <strong style="color:#e2e8f0;">Renova</strong> inova com modelo de assinatura mensal que inclui bundle de injetáveis na adesão. A <strong style="color:#e2e8f0;">Medical San</strong> se destaca com carência de 90 dias em 48x. A <strong style="color:#e2e8f0;">Med System</strong> ofereceu 24x sem juros no boleto — condição exclusiva de feira.
+          </div>
+        </div>
+
+        <div style="background:#0f1117; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+          <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#4ade80; margin-bottom:10px;">🛡️ Garantias</div>
+          <div style="font-size:0.83rem; color:#94a3b8; line-height:1.6;">
+            Amplitude de 12 a 24 meses entre os players. <strong style="color:#e2e8f0;">Medical San</strong> lidera com 24 meses. <strong style="color:#e2e8f0;">Bioset</strong> chega a 3 anos no modelo Vitavers — mas cai para 18 meses nas demais modalidades. <strong style="color:#e2e8f0;">Cromatik</strong> oferece o menor prazo: 12 meses. <strong style="color:#e2e8f0;">Med System</strong> não declarou prazo, argumentando com índice "quase insignificante" de defeitos. <strong style="color:#e2e8f0;">Renova</strong> usa a propriedade da máquina durante a assinatura como equivalente à garantia total.
+          </div>
+        </div>
+
+        <div style="background:#0f1117; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+          <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#fb923c; margin-bottom:10px;">🔧 Pós-Venda e Downtime</div>
+          <div style="font-size:0.83rem; color:#94a3b8; line-height:1.6;">
+            Este foi o ponto de maior variação entre os players. <strong style="color:#e2e8f0;">Cromatik</strong> teve a promessa mais agressiva: ~5 dias úteis com compromisso de máquina emprestada se ultrapassar. <strong style="color:#e2e8f0;">Renova</strong> comprometeu troca em até 7 dias úteis (equipamento pertence a eles). <strong style="color:#e2e8f0;">Medical San</strong> garante resposta em 24h. <strong style="color:#e2e8f0;">Fismatek</strong> oferece máquina de empréstimo sem prazo fixo para reparos longos. <strong style="color:#e2e8f0;">Bioset</strong> foi o mais honesto: estimou ~20 dias. <strong style="color:#e2e8f0;">Med System</strong> não declarou prazo.
+          </div>
+        </div>
+
+        <div style="background:#0f1117; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+          <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#c084fc; margin-bottom:10px;">🎯 Proposta de Valor Central</div>
+          <div style="font-size:0.83rem; color:#94a3b8; line-height:1.6;">
+            Cada player aposta num ângulo diferente: <strong style="color:#e2e8f0;">Bioset</strong> → custo de insumo baixíssimo e crédito acessível. <strong style="color:#e2e8f0;">Cromatik</strong> → tecnologia 2 em 1 e versatilidade médica. <strong style="color:#e2e8f0;">Fismatek</strong> → 40 anos de mercado e segurança de marca. <strong style="color:#e2e8f0;">Med System</strong> → marca conhecida pelo paciente final (pull de demanda). <strong style="color:#e2e8f0;">Medical San</strong> → fabricação nacional e maior garantia. <strong style="color:#e2e8f0;">Renova</strong> → zero capital inicial, zero risco de reparo.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Blips na visão dos concorrentes -->
+      <div style="background:#1a1020; border:1px solid #5b21b6; border-radius:10px; padding:18px; margin-bottom:28px;">
+        <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#a78bfa; margin-bottom:12px;">🔍 Como os concorrentes enxergam a Blips</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+          <div style="background:#120d1e; border-radius:8px; padding:12px;">
+            <div style="font-size:0.7rem; font-weight:700; color:#7c3aed; margin-bottom:4px;">Bioset</div>
+            <div style="font-size:0.8rem; color:#c4b5fd; line-height:1.5;">Concorrente direto no modelo de aluguel/arrendamento. Acusa a Blips de enviar máquinas usadas de clientes anteriores, ser uma cópia e não ter presença física.</div>
+          </div>
+          <div style="background:#120d1e; border-radius:8px; padding:12px;">
+            <div style="font-size:0.7rem; font-weight:700; color:#7c3aed; margin-bottom:4px;">Fismatek</div>
+            <div style="font-size:0.8rem; color:#c4b5fd; line-height:1.5;">Conhece, mas posiciona a Blips como mais barata e menos durável. Usa os 40 anos de mercado como argumento de superioridade.</div>
+          </div>
+          <div style="background:#120d1e; border-radius:8px; padding:12px;">
+            <div style="font-size:0.7rem; font-weight:700; color:#7c3aed; margin-bottom:4px;">Med System</div>
+            <div style="font-size:0.8rem; color:#c4b5fd; line-height:1.5;">Não reconheceu a marca. Tratou como marca nova e irrelevante no mercado — "tem tanta marca nova agora."</div>
+          </div>
+          <div style="background:#120d1e; border-radius:8px; padding:12px;">
+            <div style="font-size:0.7rem; font-weight:700; color:#7c3aed; margin-bottom:4px;">Medical San</div>
+            <div style="font-size:0.8rem; color:#c4b5fd; line-height:1.5;">Conhece, mas crítica implícita: importados = risco de peças e downtime prolongado. Valoriza o nacional como diferencial de segurança.</div>
+          </div>
+          <div style="background:#120d1e; border-radius:8px; padding:12px;">
+            <div style="font-size:0.7rem; font-weight:700; color:#7c3aed; margin-bottom:4px;">Cromatik / Renova</div>
+            <div style="font-size:0.8rem; color:#c4b5fd; line-height:1.5;">Não mencionaram a Blips durante a abordagem — sem percepção ativa de ameaça ou relevância.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conclusões -->
+      <div style="border-top:1px solid #1e293b; padding-top:20px;">
+        <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#f1f5f9; margin-bottom:14px;">📌 Conclusões</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <div style="width:24px; height:24px; background:#1e3a5f; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0; margin-top:1px;">1</div>
+            <div style="font-size:0.85rem; color:#94a3b8; line-height:1.6;"><strong style="color:#e2e8f0;">O modelo de aluguel/assinatura ainda é pouco explorado.</strong> Apenas Bioset (Vitavers) e Renova operam com estrutura parecida com a da Blips. Os demais seguem venda tradicional com parcelamento. Isso posiciona a Blips num nicho ainda com espaço, mas com competição crescente.</div>
+          </div>
+
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <div style="width:24px; height:24px; background:#1e3a5f; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0; margin-top:1px;">2</div>
+            <div style="font-size:0.85rem; color:#94a3b8; line-height:1.6;"><strong style="color:#e2e8f0;">A acusação de "máquinas usadas" pela Bioset é o ataque mais direto e perigoso à Blips.</strong> A narrativa de que a Blips retira máquinas de outros clientes e envia ao próximo precisa de contra-argumento claro e comunicado ativamente — especialmente no momento de venda.</div>
+          </div>
+
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <div style="width:24px; height:24px; background:#1e3a5f; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0; margin-top:1px;">3</div>
+            <div style="font-size:0.85rem; color:#94a3b8; line-height:1.6;"><strong style="color:#e2e8f0;">Pós-venda e downtime são a dor central do cliente — e uma oportunidade para a Blips.</strong> Nenhum player entregou uma promessa de pós-venda genuinamente sólida e crível. Quem conseguir comunicar um SLA claro e baixo tempo de substituição terá vantagem real de conversão.</div>
+          </div>
+
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <div style="width:24px; height:24px; background:#1e3a5f; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0; margin-top:1px;">4</div>
+            <div style="font-size:0.85rem; color:#94a3b8; line-height:1.6;"><strong style="color:#e2e8f0;">A ausência de presença física foi citada como fraqueza da Blips.</strong> Investir em pontos de referência regionais ou parcerias de assistência técnica local pode neutralizar esse argumento usado pela Bioset.</div>
+          </div>
+
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <div style="width:24px; height:24px; background:#1e3a5f; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0; margin-top:1px;">5</div>
+            <div style="font-size:0.85rem; color:#94a3b8; line-height:1.6;"><strong style="color:#e2e8f0;">Parte significativa do mercado ainda não conhece ou subestima a Blips.</strong> Med System não reconheceu a marca. Cromatik e Renova não a mencionaram. Isso indica oportunidade de awareness, mas também fragilidade de posicionamento competitivo ainda a ser construído.</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="companies-grid">
+
+  <!-- ===== BIOSET ===== -->
+  <div class="company-card theme-bioset">
+    <div class="company-header">
+      <div class="company-icon">🟢</div>
+      <div>
+        <div class="company-name">Bioset</div>
+        <div class="company-subtitle">Laser depilação · Criolipolise + LED + Cavitação · Laser remoção</div>
+      </div>
+    </div>
+
+    <div class="value-prop-banner">
+      <span class="vp-label">⭐ Proposta de Valor</span>
+      <span class="vp-text">Baixo custo de insumo com alta margem clínica — <em>"De insumo você tá gastando nem R$100. A gente cobra R$4, 5, R$6.000 do paciente."</em> Três modalidades em um equipamento + modelo Vitavers que não exige análise de crédito.</span>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Funcionamento</div>
+        <div class="detail-content">
+          <strong>Laser Depilação:</strong> ponta resfriada até -8°C, parametrizável direto no handpiece. Protocolos pré-definidos por fototipo.<br><br>
+          <strong>Crio + LED + Cavitação:</strong> 3 em 1 — criolipolise, painéis de LED e cavitação. Trata corpo inteiro, inclusive lipedema. Sessão de 3–4h, resultado visível em 45 dias.<br><br>
+          <strong>Laser Remoção:</strong> terceiro equipamento independente.
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Preço e Pagamento</div>
+        <div class="detail-content">
+          <strong>À vista (feira):</strong> R$67.000 (normal R$80.000)<br>
+          <strong>Cartão:</strong> 18x sem juros<br>
+          <strong>Financiamento:</strong> 36x via financeira<br><br>
+
+          <div style="background:#1a2e1a; border: 1px solid #166534; border-radius:8px; padding:16px; margin: 4px 0 8px;">
+            <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase; color:#4ade80; margin-bottom:10px;">⚡ Vitavers — sem análise de crédito</div>
+            <div style="font-size:0.84rem; color:#bbf7d0; line-height:1.6; margin-bottom:12px;">
+              Entrada <strong style="color:#fff;">R$2.000</strong> (3x no cartão) + <strong style="color:#fff;">36x R$1.990</strong> + balão de <strong style="color:#fff;">R$8.000</strong>.
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:8px;">
+
+              <div style="background:#0f1f0f; border-left:3px solid #16a34a; border-radius:6px; padding:10px;">
+                <div style="font-size:0.65rem; color:#4ade80; font-weight:700; margin-bottom:4px;">Apresentação inicial</div>
+                <div style="font-size:0.83rem; color:#bbf7d0; font-style:italic;">"Sem análise de crédito, sem juros, sem consulta."</div>
+              </div>
+
+              <div style="background:#0f1f0f; border-left:3px solid #16a34a; border-radius:6px; padding:10px;">
+                <div style="font-size:0.65rem; color:#4ade80; font-weight:700; margin-bottom:4px;">Quando Caio revelou que o crédito não estava bom</div>
+                <div style="font-size:0.83rem; color:#bbf7d0; font-style:italic;">"Vamos no Vitavers. Porque o Vitavers é nosso, né, cara? <strong style="color:#fff;">Sou eu apostando em você.</strong> É uma coisa diferente. Sou eu apostando pro seu negócio vai dar certo. Você precisa que dê certo. Eu preciso em dobro — porque se o seu negócio der certo, você vai vir aqui e vai pegar mais três máquinas. É que a gente cresce junto."</div>
+              </div>
+
+              <div style="background:#0f1f0f; border-left:3px solid #16a34a; border-radius:6px; padding:10px;">
+                <div style="font-size:0.65rem; color:#4ade80; font-weight:700; margin-bottom:4px;">Filosofia da empresa</div>
+                <div style="font-size:0.83rem; color:#bbf7d0; font-style:italic;">"Uma empresa que não quer te empurrar qualquer coisa — empresa quer te ajudar."</div>
+              </div>
+
+            </div>
+          </div>
+
+          Primeiro pagamento com <strong>carência de 90 dias</strong>.
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Garantia</div>
+        <div class="detail-content">
+          <span class="badge badge-green">3 anos — Vitavers</span><br>
+          <span class="badge badge-yellow">18 meses — Cartão/Financiamento</span><br><br>
+          Treinamento incluso em todos os modelos.
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Pós-Venda / Downtime</div>
+        <div class="detail-content">
+          1º: suporte remoto via software.<br>
+          2º: envio de técnico.<br>
+          3º: envio de máquina substituta.<br><br>
+          <span class="badge badge-yellow">Estimativa: ~20 dias</span><br><br>
+          <div class="quote">"Vou botar uns 20 dias. É para ficar honesto, não adianta falar que é três dias."</div>
+          30+ lojas físicas no Brasil. Fábrica em Uberlândia.
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="detail-block" style="grid-column: 1 / -1; background: #1a1020; border: 1px solid #5b21b6; border-radius: 10px; padding: 20px;">
+        <div class="detail-label" style="color: #a78bfa;"><span class="dot" style="background:#a78bfa;"></span>⚠️ Percepção sobre a Blips — destaque</div>
+        <div class="detail-content">
+          <p style="color:#c4b5fd; font-size:0.82rem; margin-bottom:12px;">O vendedor mencionou a Blips espontaneamente e por múltiplos ângulos — modelo de negócio, máquinas usadas vs. novas, tecnologia, origem e presença física.</p>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+
+            <div style="background:#120d1e; border-left: 3px solid #7c3aed; border-radius:6px; padding:12px;">
+              <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase; color:#7c3aed; margin-bottom:6px;">Modelo de negócio</div>
+              <div class="quote" style="border:none; padding:0; color:#c4b5fd;">"A Blips também trabalha um modelo parecido com o nosso — aluguel. <strong style="color:#f0e6ff;">Só que você não tem a possibilidade de ficar com a máquina.</strong> Quando você assina o contrato com a Bioset, você tá comprando."</div>
+            </div>
+
+            <div style="background:#1e0a0a; border-left: 3px solid #dc2626; border-radius:6px; padding:12px;">
+              <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase; color:#f87171; margin-bottom:6px;">🔴 Máquinas usadas vs. novas</div>
+              <div class="quote" style="border:none; padding:0; color:#fca5a5;">"Eu não vou pegar uma máquina que saiu do outro daqui. <strong style="color:#fff;">Não vou pegar essa máquina aqui, entendeu? Para te mandar uma tecnologia zero.</strong> É outra coisa."</div>
+              <div style="margin-top:8px; font-size:0.78rem; color:#f87171; font-style:italic;">Insinuação direta: a Blips mandaria máquinas que "saíram de outro cliente" — ou seja, usadas.</div>
+            </div>
+
+            <div style="background:#120d1e; border-left: 3px solid #7c3aed; border-radius:6px; padding:12px;">
+              <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase; color:#7c3aed; margin-bottom:6px;">Quem veio primeiro</div>
+              <div class="quote" style="border:none; padding:0; color:#c4b5fd;">"<strong style="color:#f0e6ff;">A gente começou e eles vieram depois.</strong> É uma cópia, mas não faz igual. Até porque não tem toda a estrutura para fazer igual."</div>
+            </div>
+
+            <div style="background:#120d1e; border-left: 3px solid #7c3aed; border-radius:6px; padding:12px;">
+              <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase; color:#7c3aed; margin-bottom:6px;">Presença física</div>
+              <div class="quote" style="border:none; padding:0; color:#c4b5fd;">"A gente tem mais de 30 lojas no Brasil, consigo te dar suporte aonde você tiver. <strong style="color:#f0e6ff;">Já eles não têm ponto físico.</strong>"</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CROMATIK ===== -->
+  <div class="company-card theme-cromatik">
+    <div class="company-header">
+      <div class="company-icon">🔴</div>
+      <div>
+        <div class="company-name">Cromatik</div>
+        <div class="company-subtitle">Laser CO2 Fusion · HIFU + RF/EM · Depilação + Remoção 2 em 1</div>
+      </div>
+    </div>
+
+    <div class="value-prop-banner">
+      <span class="vp-label">⭐ Proposta de Valor</span>
+      <span class="vp-text">Único equipamento do mercado que combina depilação e remoção de tatuagem no mesmo aparelho (Infinity Dolos). CO2 com versatilidade para múltiplas especialidades médicas. HIFU corporal com 525 pontos num único disparo — velocidade extrema de tratamento.</span>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Funcionamento</div>
+        <div class="detail-content">
+          <strong>Laser CO2 Fusion:</strong> 4 modos (Core, Super Pulso, Fusion, Master). Trata fototipos altos, melasma, rejuvenescimento, ginecoestética, proctologia e mais. Kit ginecológico incluso.<br><br>
+          <strong>HIFU Micro+Macro + EM/RF:</strong> aplicador facial (430 pontos/disparo no modo MP) + aplicador corporal (525 pontos simultâneos). 11 kg — cabe em carro de passeio.<br><br>
+          <strong>Infinity Dolos:</strong> 4 comprimentos de onda (755/808/940/1064nm) + Nd:YAG Q-Switch Pico com 5 nanosegundos. Mínimo 60M disparos.
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Preço e Pagamento</div>
+        <div class="detail-content">
+          <strong>Infinity Dolos:</strong> de R$149K → <strong>R$99.900</strong> (feira, à vista) ou 60x R$3.490<br>
+          <strong>HIFU:</strong> de R$179K → <strong>R$130.000</strong> (feira) ou 48x R$3.990<br>
+          <strong>CO2 Fusion:</strong> de R$149K → <strong>R$129.900</strong> (feira) ou 48x R$5.990<br><br>
+          Bundle dos 3: ~R$360.700<br>
+          Parcela mínima sem entrada: ~R$13.470/mês (os três juntos).<br>
+          Fábrica em Ribeirão Preto. Treinamento presencial incluso.
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Garantia</div>
+        <div class="detail-content">
+          <span class="badge badge-red">12 meses — todos os equipamentos</span><br><br>
+          <div class="quote">"Todas elas, qualquer uma são 12 meses."</div>
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Pós-Venda / Downtime</div>
+        <div class="detail-content">
+          Equipe dedicada: 1 pós-venda + 1 técnico de visitas + 1 manutenção preventiva.<br>
+          Frete via transportadora parceira (~2 dias). Reparo: 1–2 dias úteis na fábrica.<br><br>
+          <span class="badge badge-green">Estimativa: ~5 dias úteis</span><br><br>
+          Se demorar mais: máquina emprestada ou troca.<br>
+          <div class="quote">"A gente sabe que se você tiver que pagar meu boleto, a única forma é fazendo dinheiro com a máquina."</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="detail-block" style="grid-column: 1 / -1;">
+        <div class="detail-label"><span class="dot"></span>Percepção sobre a Blips</div>
+        <div class="detail-content">
+          Não foi mencionada pelo vendedor durante a abordagem. Nenhum comentário explícito registrado.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FISMATEK ===== -->
+  <div class="company-card theme-fismatek">
+    <div class="company-header">
+      <div class="company-icon">🔵</div>
+      <div>
+        <div class="company-name">Fismatek</div>
+        <div class="company-subtitle">MS Face (EMFACE) · HIFU + RF · Epilação LED</div>
+      </div>
+    </div>
+
+    <div class="value-prop-banner">
+      <span class="vp-label">⭐ Proposta de Valor</span>
+      <span class="vp-text">40 anos de mercado como âncora de credibilidade. MS Face como alternativa nacional ao EMFACE (R$159K vs R$600K). Política de máquina de empréstimo para reparos longos — <em>"Vamos deixar uma máquina de empréstimo com você."</em></span>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Funcionamento</div>
+        <div class="detail-content">
+          <strong>MS Face:</strong> estimulação muscular facial supramáxima por eletrodos + RF simultânea. Sem agulhas, sem downtime. 40 kits de tratamento inclusos. Kit de reposição ~R$450/paciente.<br><br>
+          <strong>EOS Full HIFU:</strong> ultrassom micro+macrofocado + RF simultânea. Atinge camada SMAS. Cartuchos com 100.000 disparos (~R$0,05/disparo).<br><br>
+          <strong>Epilação LED:</strong> versão 600W (clínicas mistas) e 1200W (clínicas especializadas). Ponteira para precisão (barba, orelha, sobrancelha).
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Preço e Pagamento</div>
+        <div class="detail-content">
+          <strong>MS Face:</strong> R$159.900 → <strong>R$159.000 / 36x</strong> (feira), 1ª parcela em 60 dias<br>
+          <strong>EOS Full HIFU:</strong> R$139K → <strong>R$129.000 / 36x</strong> (feira) ou R$119K à vista<br>
+          <strong>Epilação LED 600W:</strong> R$149K → <strong>R$129.000 / 36x</strong> (feira) ou R$110K à vista<br><br>
+          Análise por CPF ou CNPJ. Frete grátis para Uberlândia.<br>
+          Fábrica própria: 3 plantas na China + EUA (FDA).
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Garantia</div>
+        <div class="detail-content">
+          <span class="badge badge-blue">18 meses — todos os equipamentos</span><br><br>
+          <div class="quote">"A gente trabalha aqui na feira com 18 meses de garantia para tudo."</div>
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Pós-Venda / Downtime</div>
+        <div class="detail-content">
+          Assistência técnica autorizada em todo o Brasil.<br>
+          Reparos simples: 1–2 dias. Reparos complexos (central): 30–50 dias.<br><br>
+          <span class="badge badge-blue">Máquina de empréstimo se reparo for longo</span><br><br>
+          Custo de frete dividido: parte Fismatek, parte cliente.<br>
+          <div class="quote">"Para mim quem fica 40 anos no mercado enganando alguém é político. Do resto não se sustenta."</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="detail-block" style="grid-column: 1 / -1;">
+        <div class="detail-label"><span class="dot"></span>Percepção sobre a Blips</div>
+        <div class="detail-content">
+          <div class="quote">"Eu fui ali, o pessoal da ESA ali também, Blips, né, também e eles também falaram que era da China."</div>
+          Quando mencionado preço mais baixo da Blips: <div class="quote">"É aí você tem que entender durabilidade, custo benefício. A Fismatek está 40 anos no mercado. Ninguém fica tanto tempo no mercado vendendo porcaria."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MED SYSTEM / ULTRAFORMER ===== -->
+  <div class="company-card theme-medsystem">
+    <div class="company-header">
+      <div class="company-icon">🟣</div>
+      <div>
+        <div class="company-name">Med System (Classys / Ultraformer)</div>
+        <div class="company-subtitle">Ultraformer 3 · Ultraformer MPT · Distribuidora oficial Classys</div>
+      </div>
+    </div>
+
+    <div class="value-prop-banner">
+      <span class="vp-label">⭐ Proposta de Valor</span>
+      <span class="vp-text">Marca com demanda de consumidor final — <em>"É igual Bombril — o paciente já chega pedindo Ultraformer."</em> Líder mundial em 70+ países, com maior base de evidências científicas. Med System agora pertence à Classys (fabricante coreana), eliminando risco de falta de peças.</span>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Funcionamento</div>
+        <div class="detail-content">
+          <strong>Ultraformer 3:</strong> HIFU micro+macrofocado, 17–22 pontos por disparo em linhas lineares. 2 handpieces (diferencial de fluxo). Custo por disparo: R$1,00.<br><br>
+          <strong>Ultraformer MPT (mais atual):</strong> cannulas booster com padrão circular/espiral → até 417 pontos/disparo. ~3x mais rápido que o modelo 3. Quase indolor. Maior permeabilidade tecidual para ativos.<br><br>
+          Trade-in: Med System paga R$100.000 pelo Ultraformer 3 na compra do MPT.
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Preço e Pagamento</div>
+        <div class="detail-content">
+          <strong>Ultraformer 3:</strong> normal R$110K → <strong>R$89.000</strong> (feira)<br>
+          <strong>Ultraformer MPT:</strong> normal R$350K → <strong>R$250.000</strong> (feira)<br><br>
+          <span class="badge badge-purple">24x sem juros no boleto (exclusivo de feira)</span><br>
+          Cartão: 18x sem juros.<br>
+          Fora da feira: 36x com juros (abaixo do mercado).<br><br>
+          <div class="quote">"Você não consegue encontrar um lugar que tem essa possibilidade de 24x sem juros."</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Garantia</div>
+        <div class="detail-content">
+          Prazo não informado explicitamente.<br>
+          Vendedor focou no índice baixíssimo de defeito:<br><br>
+          <div class="quote">"A gente tem um índice muito baixo, quase que insignificante de defeito de máquina."</div>
+          Tecnologia coreana líder mundial como argumento de confiabilidade.
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Pós-Venda / Downtime</div>
+        <div class="detail-content">
+          Med System foi adquirida pela Classys (fabricante) — acesso direto à fábrica e estoque de peças.<br>
+          Manutenção preventiva anual: no HQ em SP ou técnico vai até o cliente.<br>
+          Prazo de reparo não informado — argumento é a raridade de problemas.<br><br>
+          <span class="badge badge-purple">Downtime: não declarado</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="detail-block" style="grid-column: 1 / -1;">
+        <div class="detail-label"><span class="dot"></span>Percepção sobre a Blips</div>
+        <div class="detail-content">
+          Vendedor não reconheceu a marca:
+          <div class="quote">"Não conheço. O que que eles são? Revenda?"</div>
+          <div class="quote">"Tem tanta marca nova agora, né? Engraçado que deles eu não peguei nada."</div>
+          Posicionamento implícito: Blips/ESA são marcas novas demais para ser relevantes.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MEDICAL SAN ===== -->
+  <div class="company-card theme-medicalsan">
+    <div class="company-header">
+      <div class="company-icon">🟠</div>
+      <div>
+        <div class="company-name">Medical San</div>
+        <div class="company-subtitle">Racon (4 wavelengths) · Ultramed HIFU · Omer Q-Switch</div>
+      </div>
+    </div>
+
+    <div class="value-prop-banner">
+      <span class="vp-label">⭐ Proposta de Valor</span>
+      <span class="vp-text">34 anos de mercado + marca 100% nacional. Racon com 4 comprimentos de onda incluindo Rubi (único no mercado) + ponteira de disparos ilimitados. Maior garantia visitada: <strong>24 meses</strong>. Carência de 90 dias — <em>"você recebe a máquina agora e só começa a pagar em 90 dias."</em></span>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Funcionamento</div>
+        <div class="detail-content">
+          <strong>Racon (epilação):</strong> 4 comprimentos de onda (Nd:YAG, Alexandrite, Diodo, <strong>Rubi</strong>). Resfriamento direto na ponta, até -10°C. Trata todos os fototipos. <strong>Disparos ilimitados</strong> (novo modelo elimina limite de 40M). Apenas calibração anual recomendada.<br><br>
+          <strong>Ultramed (HIFU nacional):</strong> equivalente ao Ultraformer MPT. Inclui aplicadores: facial, Pen, corporal e íntimo. ~Metade do preço do Ultraformer para resultado equivalente.<br><br>
+          <strong>Omer (Q-Switch):</strong> remoção de micropigmentação, tatuagens, Black Peel, rejuvenescimento, clareamento íntimo.
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Preço e Pagamento</div>
+        <div class="detail-content">
+          <strong>Racon:</strong> R$89.900 à vista / <strong>48x R$3.365</strong> com carência de 90 dias<br>
+          <strong>Ultramed:</strong> R$261K tabelado / <strong>48x R$9.810</strong> com carência de 90 dias<br><br>
+          Cartão: 18x sem juros.<br>
+          Análise CPF ou CNPJ (CNPJ < 1 ano geralmente reprovado → CPF como fallback).<br><br>
+          <span class="badge badge-yellow">Carência de 90 dias em todos os parcelamentos</span><br>
+          Condições de feira válidas até sábado; possível negociar na segunda.
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Garantia</div>
+        <div class="detail-content">
+          <span class="badge badge-green">24 meses — todos os equipamentos</span><br><br>
+          <div class="quote">"Desses equipamentos 24 meses todos."</div>
+          Maior prazo de garantia entre todas as empresas visitadas.
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Pós-Venda / Downtime</div>
+        <div class="detail-content">
+          <span class="badge badge-green">Resposta em 24 horas garantida</span><br><br>
+          Assistência autorizada em todo o Brasil. Técnico vai ao cliente ou cliente leva ao centro técnico.<br>
+          Reparos simples: 3–5 dias. Troca de aplicador: ~15 dias.<br>
+          Máquina de backup disponível se necessário.<br><br>
+          <div class="quote">"Tem que ser uma marca nacional. Essas importadas é equipamento shilling [sic]."</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="detail-block" style="grid-column: 1 / -1;">
+        <div class="detail-label"><span class="dot"></span>Percepção sobre a Blips</div>
+        <div class="detail-content">
+          <div class="quote">"Você não conhece as máquinas dos outros lá, né? Fismatek, Blips. Você não conhece? Conheço, tá? Já a gente já trabalhou com as Fismatek. Aham. Não trabalhamos mais."</div>
+          Crítica implícita: máquinas importadas = risco de ficar sem peças = downtime prolongado. Posicionamento nacional como diferenciador de segurança.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RENOVA ===== -->
+  <div class="company-card theme-renova">
+    <div class="company-header">
+      <div class="company-icon">🩵</div>
+      <div>
+        <div class="company-name">Renova</div>
+        <div class="company-subtitle">HIFU Facial + Corporal · Plasma LIP · Modelo de Assinatura</div>
+      </div>
+    </div>
+
+    <div class="value-prop-banner">
+      <span class="vp-label">⭐ Proposta de Valor</span>
+      <span class="vp-text">Modelo de assinatura elimina o desembolso alto inicial — ideal para clínicas novas sem crédito. Renova mantém a propriedade do equipamento durante a assinatura, garantindo troca em até 7 dias úteis sem custo adicional. Bundle de injetáveis incluso na adesão + upgrade tecnológico mid-contrato.</span>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Funcionamento</div>
+        <div class="detail-content">
+          <strong>HIFU Facial:</strong> 18–25 pontos de termocoagulação por disparo.<br>
+          <strong>HIFU Full (facial + corporal):</strong> cabeçote facial (18–25 pontos) + cabeçote corporal (6–12 linhas adicionais por disparo). Muito rápido.<br><br>
+          <strong>Plasma LIP:</strong> plasma quente para retração palpebral (alternativa à blefaroplastia) + plasma frio. Micro-punturas para estimulação de colágeno.<br><br>
+          Em desenvolvimento: RF robótica, IPL, LED, mapeamento de pele (Derman), scanner UV. Fábrica coreana com participação societária do CEO.
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Preço e Pagamento</div>
+        <div class="detail-content">
+          <strong>Modelo principal: Assinatura</strong><br>
+          HIFU Full: <strong>24 mensalidades de R$6.000</strong><br>
+          Adesão: 3 últimas parcelas adiantadas (~R$18.000) + <strong>R$60.000 em injetáveis</strong><br>
+          Após 24 meses: + R$12.000 para ficar com a máquina.<br><br>
+          Versão facial: ~metade dos valores.<br><br>
+          <span class="badge badge-blue">Upgrade tecnológico possível no meio do contrato</span><br>
+          Compra direta também disponível para alguns equipamentos.
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Garantia</div>
+        <div class="detail-content">
+          Durante a assinatura: equipamento pertence à Renova → responsabilidade total por manutenção e substituição.<br><br>
+          Após aquisição (24m + R$12K): <span class="badge badge-yellow">1 ano de garantia</span><br><br>
+          <div class="quote">"Se der algum problema, a gente troca."</div>
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <div class="detail-label"><span class="dot"></span>Pós-Venda / Downtime</div>
+        <div class="detail-content">
+          <span class="badge badge-green">Troca em até 7 dias úteis</span><br><br>
+          Equipamento pertence à Renova durante assinatura → zero custo de reparo para o cliente.<br>
+          Fábrica coreana de última geração — "dificilmente vai dar problema porque a tecnologia é muito atual."<br><br>
+          <div class="quote">"Tem no máximo sete dias úteis para trocar o aparelho. Então não precisa ficar esperando chegar."</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="detail-block" style="grid-column: 1 / -1;">
+        <div class="detail-label"><span class="dot"></span>Percepção sobre a Blips</div>
+        <div class="detail-content">
+          Blips não foi mencionada durante a abordagem. Nenhum comentário registrado.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>Feira Fullface · São Paulo · 2026 · Pesquisa de Cliente Oculto · Uso interno</p>
+</footer>
+
+</body>
+</html>
